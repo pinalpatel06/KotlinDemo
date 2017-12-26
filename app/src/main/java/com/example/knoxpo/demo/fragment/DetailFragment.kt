@@ -7,18 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.knoxpo.demo.R
+import com.example.knoxpo.demo.model.Post
 
 /**
  * Created by knoxpo on 25/12/17.
  */
 class DetailFragment : Fragment() {
-    private val ARGS_TITLE: String = "DetailFragment.ARGS_TITLE"
 
     companion object {
-        fun newInstance(str: String): DetailFragment{
+        private val ARGS_TITLE: String = "DetailFragment.ARGS_TITLE"
+
+        fun newInstance(post: Post): DetailFragment{
             val args = Bundle()
             val fragment = DetailFragment()
-            args.putString(fragment.ARGS_TITLE,str)
+            args.putParcelable(DetailFragment.ARGS_TITLE,post)
             fragment.arguments = args
             return fragment
         }
@@ -30,9 +32,9 @@ class DetailFragment : Fragment() {
         val args: Bundle = arguments
         val textTV = view.findViewById<TextView>(R.id.tv_detail_title)
 
-        val str: String = args.getString(ARGS_TITLE)
-        if (!str.isEmpty()){
-            textTV.text = str
+        val post: Post = args.getParcelable(ARGS_TITLE)
+        if (post.getPostBody().isNotEmpty()){
+            textTV.text = post.getPostBody()
         }
 
         return  view

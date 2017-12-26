@@ -18,28 +18,26 @@ import com.example.knoxpo.demo.model.Post
 import com.example.knoxpo.demo.retrofitPkg.RetrofitHelper
 import com.example.knoxpo.demo.retrofitPkg.RetrofitInterface
 import io.reactivex.Single
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.reactivestreams.Subscriber
 
 /**
  * Created by knoxpo on 25/12/17.
  */
 class MainFragment : Fragment() {
 
-    var postList = ArrayList<Post>()
+    private var mPostList = ArrayList<Post>()
+    private lateinit var mRecyclerView: RecyclerView
 
-    lateinit var recyclerView: RecyclerView
-
-    private fun getList(): ArrayList<String> {
-        val titles = ArrayList<String>()
-        titles.add("ABC")
-        titles.add("XYZ")
-        titles.add("PQR")
-        return titles
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private fun getList() {
+        /* val titles = ArrayList<String>()
+         titles.add("ABC")
+         titles.add("XYZ")
+         titles.add("PQR")
+         return titles*/
 
         val retrofitInterface = RetrofitHelper.getRetrofit().create(RetrofitInterface::class.java)
         val single: Single<Post> = retrofitInterface.getPost(5)
@@ -47,62 +45,90 @@ class MainFragment : Fragment() {
         single
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    t1->
-                    postList.add(t1)
-                    Log.d("data", postList.get(0).toString())
-                    recyclerView.adapter.notifyDataSetChanged()
-                }
+                /*.subscribe { t1 ->
+                    mPostList.add(t1)
+                    Log.d("data", mPostList.get(0).toString())
+                    mRecyclerView.adapter.notifyDataSetChanged()
+
+                }*/
+                /*.subscribe {
+                    t1,
+                    t2 ->
+
+                    if(t1 != null) {
+                        mPostList.add(t1)
+                        Log.d("data", mPostList.get(0).toString())
+                        mRecyclerView.adapter.notifyDataSetChanged()
+                    }else{
+                        Log.d("Error: ", t2.message)
+                    }
+                }*/
+                .subscribe(object : SingleObserver<Post> {
+                    override fun onSuccess(value: Post) {
+                        //val post = Post(1,1,"ABC","dfhdhfjdbjsdfhjdf ")
+                        mPostList.add(value)
+                        Log.d("data", mPostList.get(0).toString())
+                        mRecyclerView.adapter.notifyDataSetChanged()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.d("Error: ", e.message)
+                    }
+
+                    override fun onSubscribe(d: Disposable?) {
+
+                    }
+                })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getList()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view: View = inflater!!.inflate(R.layout.fragment_main, container, false)
 
-        recyclerView = view.findViewById(R.id.rv_list)
-        recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-        recyclerView.adapter = Adaper(postList)
+        mRecyclerView = view.findViewById(R.id.rv_list)
+        mRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
+        mRecyclerView.adapter = Adaper()
         return view
     }
 
-
-    class Adaper(val list: ArrayList<Post>) : RecyclerView.Adapter<AdapterVH>() {
+    //inner is use to access outer class member like mPostList
+    inner class Adaper() : RecyclerView.Adapter<AdapterVH>() {
 
         override fun onBindViewHolder(holder: AdapterVH, position: Int) {
-            holder.bind(list[position])
+            holder.bind(mPostList[position])
         }
 
         override fun getItemCount(): Int {
-            return list.size
+            return mPostList.size
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterVH {
             val v = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
-            return AdapterVH(v, parent.context)
+            return AdapterVH(v)
         }
     }
 
-    class AdapterVH(itemView: View?, context: Context) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class AdapterVH(itemView: View?) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         lateinit var mPost: Post
+        private lateinit var titleTV: TextView
 
         override fun onClick(p0: View?) {
-            val intent = Intent(mContext, DetailActivity::class.java)
-            intent.putExtra(DetailActivity().EXTRA_TITLE,mPost.body)
-            mContext.startActivity(intent)
-        }
-
-        lateinit var titleTV: TextView
-        val mContext: Context
-        init {
-            mContext = context
+            val intent = Intent(activity, DetailActivity::class.java)
+            intent.putExtra(DetailActivity.EXTRA_TITLE, mPost)
+            activity.startActivity(intent)
         }
 
         fun bind(post: Post) {
             mPost = post
-            Log.d("On Bind", post.mTitle)
-            titleTV = itemView.findViewById<TextView>(R.id.tv_title)
+            Log.d("On Bind", post.getPostUserId().toString())
+            titleTV = itemView.findViewById(R.id.tv_title)
             titleTV.setOnClickListener(this)
-            titleTV.text = post.mTitle
+            titleTV.text = post.getPostTitle()
         }
     }
 }
