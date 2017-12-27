@@ -1,6 +1,5 @@
 package com.example.knoxpo.demo.fragment
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -22,7 +21,6 @@ import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.reactivestreams.Subscriber
 
 /**
  * Created by knoxpo on 25/12/17.
@@ -31,6 +29,16 @@ class MainFragment : Fragment() {
 
     private var mPostList = ArrayList<Post>()
     private lateinit var mRecyclerView: RecyclerView
+
+   inline fun <T> Single<T>.addData(
+            func: Single<T>.() -> Unit
+    ) {
+        val single = this
+        single
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .func()
+    }
 
     private fun getList() {
         /* val titles = ArrayList<String>()
@@ -42,9 +50,31 @@ class MainFragment : Fragment() {
         val retrofitInterface = RetrofitHelper.getRetrofit().create(RetrofitInterface::class.java)
         val single: Single<Post> = retrofitInterface.getPost(5)
 
-        single
+
+        single.apply {
+            addData {
+                this.subscribe(object : SingleObserver<Post> {
+                    override fun onSuccess(value: Post) {
+                        mPostList.add(value)
+                        Log.d("data", mPostList.get(0).toString())
+                        mRecyclerView.adapter.notifyDataSetChanged()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.d("Error: ", e.message)
+                    }
+
+                    override fun onSubscribe(d: Disposable?) {
+
+                    }
+                })
+            }
+        }
+
+
+        /*single
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())*/
                 /*.subscribe { t1 ->
                     mPostList.add(t1)
                     Log.d("data", mPostList.get(0).toString())
@@ -63,7 +93,7 @@ class MainFragment : Fragment() {
                         Log.d("Error: ", t2.message)
                     }
                 }*/
-                .subscribe(object : SingleObserver<Post> {
+                /*.subscribe(object : SingleObserver<Post> {
                     override fun onSuccess(value: Post) {
                         //val post = Post(1,1,"ABC","dfhdhfjdbjsdfhjdf ")
                         mPostList.add(value)
@@ -78,7 +108,9 @@ class MainFragment : Fragment() {
                     override fun onSubscribe(d: Disposable?) {
 
                     }
-                })
+                })*/
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
