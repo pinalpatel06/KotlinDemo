@@ -29,16 +29,23 @@ class PostManagerTest {
     fun testSuccess_basic() {
         val p = Post(1,5, "ggg", "rrr")
 
-        `when`(apiMock.getPosts(0)).thenReturn(
+        `when`(apiMock.getPosts(1)).thenReturn(
                 Single.just(p)
         )
 
         val postManager = PostManager(apiMock)
-        postManager.requestPost(0).subscribe(testSub)
+        postManager.requestPost(1).subscribe(testSub)
 
         testSub.assertNoErrors()
         testSub.assertValueCount(1)
         testSub.assertComplete()
     }
 
+  /*  @Test
+    fun emptyTest() {
+        apiMock.getPosts(1).subscribe(testSub)
+
+        testSub.assertError(NullPointerException())
+
+    }*/
 }
