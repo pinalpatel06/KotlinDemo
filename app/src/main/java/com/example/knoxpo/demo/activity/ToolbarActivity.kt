@@ -9,7 +9,6 @@ import com.example.knoxpo.demo.R
  */
 abstract class ToolbarActivity : SingleFragmentActivity() {
     lateinit var toolbar: Toolbar
-    get
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

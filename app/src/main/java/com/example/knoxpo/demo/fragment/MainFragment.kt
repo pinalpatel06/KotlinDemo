@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.example.knoxpo.demo.DemoApp
 import com.example.knoxpo.demo.R
 import com.example.knoxpo.demo.activity.DetailActivity
 import com.example.knoxpo.demo.model.Post
@@ -23,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.reactivestreams.Subscriber
+import javax.inject.Inject
 
 /**
  * Created by knoxpo on 25/12/17.
@@ -31,6 +33,7 @@ class MainFragment : Fragment() {
 
     private var mPostList = ArrayList<Post>()
     private lateinit var mRecyclerView: RecyclerView
+    @Inject lateinit var postManager: PostManager
 
     private fun getList() {
         /* val titles = ArrayList<String>()
@@ -39,19 +42,19 @@ class MainFragment : Fragment() {
          titles.add("PQR")
          return titles*/
 
-        val retrofitInterface = RetrofitHelper.getRetrofit().create(RetrofitInterface::class.java)
+       /* val retrofitInterface = RetrofitHelper.getRetrofit().create(RetrofitInterface::class.java)
         val single: Single<Post> = retrofitInterface.getPost(5)
 
         single
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                /*.subscribe { t1 ->
+                *//*.subscribe { t1 ->
                     mPostList.add(t1)
                     Log.d("data", mPostList.get(0).toString())
                     mRecyclerView.adapter.notifyDataSetChanged()
 
-                }*/
-                /*.subscribe {
+                }*//*
+                *//*.subscribe {
                     t1,
                     t2 ->
 
@@ -62,7 +65,7 @@ class MainFragment : Fragment() {
                     }else{
                         Log.d("Error: ", t2.message)
                     }
-                }*/
+                }*//*
                 .subscribe(object : SingleObserver<Post> {
                     override fun onSuccess(value: Post) {
                         //val post = Post(1,1,"ABC","dfhdhfjdbjsdfhjdf ")
@@ -78,17 +81,35 @@ class MainFragment : Fragment() {
                     override fun onSubscribe(d: Disposable?) {
 
                     }
-                })
+                })*/
+
+        val subscription = postManager.requestPost(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        {
+                            t: Post ->
+                            mPostList.add(t)
+                            Log.d("data", mPostList.get(0).toString())
+                            mRecyclerView.adapter.notifyDataSetChanged()
+                        },
+                        {
+                            e: Throwable ->
+                                Log.d("Error", e.message)
+                        }
+                )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getList()
+        DemoApp.postComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view: View = inflater!!.inflate(R.layout.fragment_main, container, false)
+
+        getList()
 
         mRecyclerView = view.findViewById(R.id.rv_list)
         mRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
