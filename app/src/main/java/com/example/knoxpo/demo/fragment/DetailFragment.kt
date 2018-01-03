@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.knoxpo.demo.R
-import com.example.knoxpo.demo.model.Post
+import com.example.knoxpo.demo.data.model.Post
 
 /**
  * Created by knoxpo on 25/12/17.

@@ -22,7 +22,7 @@ abstract class SingleFragmentActivity : AppCompatActivity() {
         if(fragment == null){
             fm
                     .beginTransaction()
-                    .replace(getContainerId(),getContentFragment())
+                    .add(getContainerId(),getContentFragment())
                     .commit()
         }
     }

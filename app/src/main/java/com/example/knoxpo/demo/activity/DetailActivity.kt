@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.MenuItem
 import com.example.knoxpo.demo.fragment.DetailFragment
-import com.example.knoxpo.demo.model.Post
+import com.example.knoxpo.demo.data.model.Post
 
 /**
  * Created by knoxpo on 25/12/17.

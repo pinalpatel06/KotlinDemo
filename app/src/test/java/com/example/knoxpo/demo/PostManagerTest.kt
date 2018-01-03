@@ -1,13 +1,11 @@
 package com.example.knoxpo.demo
 
 import com.example.knoxpo.demo.fragment.PostManager
-import com.example.knoxpo.demo.model.Post
+import com.example.knoxpo.demo.data.model.Post
 import com.example.knoxpo.demo.retrofitPkg.PostApi
 import io.reactivex.*
 import io.reactivex.observers.TestObserver
-import org.junit.Before
 import org.junit.Test
-import org.mockito.InjectMocks
 import org.mockito.Mockito.`when`
 
 /**
@@ -27,7 +25,7 @@ class PostManagerTest {
 
     @Test
     fun testSuccess_basic() {
-        val p = Post(1,5, "ggg", "rrr")
+        val p = Post(1, 5, "ggg", "rrr")
 
         `when`(apiMock.getPosts(1)).thenReturn(
                 Single.just(p)

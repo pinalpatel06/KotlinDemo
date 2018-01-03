@@ -1,6 +1,7 @@
 package com.example.knoxpo.demo.daggerPkg.post
 
 import com.example.knoxpo.demo.daggerPkg.AppModule
+import com.example.knoxpo.demo.data.remote.PostRemoteDataSource
 import com.example.knoxpo.demo.fragment.DetailFragment
 import com.example.knoxpo.demo.fragment.MainFragment
 import com.example.knoxpo.demo.retrofitPkg.RetrofitHelper
@@ -19,4 +20,5 @@ import javax.inject.Singleton
 )
 interface PostComponent {
     fun inject(mainFragment: MainFragment)
+    fun inject(postRemoteDataSource: PostRemoteDataSource)
 }

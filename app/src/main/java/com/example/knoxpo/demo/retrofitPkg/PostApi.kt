@@ -1,6 +1,6 @@
 package com.example.knoxpo.demo.retrofitPkg
 
-import com.example.knoxpo.demo.model.Post
+import com.example.knoxpo.demo.data.model.Post
 import io.reactivex.Single
 
 /**
@@ -8,4 +8,5 @@ import io.reactivex.Single
  */
 interface PostApi {
     fun getPosts(no: Int): Single<Post>
+    fun getAllPosts(): Single<List<Post>>
 }

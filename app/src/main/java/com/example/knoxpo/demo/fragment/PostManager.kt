@@ -1,8 +1,9 @@
 package com.example.knoxpo.demo.fragment
 
-import com.example.knoxpo.demo.model.Post
+import com.example.knoxpo.demo.data.model.Post
 import com.example.knoxpo.demo.retrofitPkg.PostApi
 import io.reactivex.Single
+import retrofit2.http.POST
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,6 +27,22 @@ class PostManager @Inject constructor(private val api: PostApi) {
                             subscriber.onError(t2)
                         }
                     }
+        }
+    }
+
+    fun requestAllPost(): Single<List<Post>> {
+        return Single.create { subscriber ->
+            val single: Single<List<Post>> = api.getAllPosts()
+
+            single
+                    .subscribe { t1, t2 ->
+                        if(t1 != null){
+                            subscriber.onSuccess(t1)
+                        }else{
+                            subscriber.onError(t2)
+                        }
+                    }
+
         }
     }
 }
