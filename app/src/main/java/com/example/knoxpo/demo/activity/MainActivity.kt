@@ -1,17 +1,20 @@
 package com.example.knoxpo.demo.activity
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import com.example.knoxpo.demo.data.model.Post
 import com.example.knoxpo.demo.fragment.MainFragment
 import com.example.knoxpo.demo.fragment.PostItemNavigator
 import com.example.knoxpo.demo.fragment.PostViewModel
 import com.example.knoxpo.demo.utils.obtainViewModel
 
 class MainActivity : ToolbarActivity(), PostItemNavigator {
-    override fun openPostDetail(postId: Long) {
+
+    override fun openPostDetail(post: Post) {
         val intent = Intent(this, DetailActivity::class.java).apply {
-            putExtra(DetailActivity.EXTRA_TITLE, postId)
+            putExtra(DetailActivity.EXTRA_TITLE, post)
         }
 
         startActivity(intent)
@@ -29,6 +32,12 @@ class MainActivity : ToolbarActivity(), PostItemNavigator {
 
         mViewModel = obtainViewModel().apply {
            // openPostDetail()
+            openPostEvent.observe(this@MainActivity, Observer<Post> { t: Post? ->
+                if(t != null){
+                    openPostDetail(t)
+                }
+            })
+
         }
 
     }

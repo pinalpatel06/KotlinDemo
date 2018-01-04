@@ -30,7 +30,7 @@ class MainFragment : Fragment() {
     private fun setupAdapter(){
         val viewModel = mFragmentBinding.viewmodel
         if(viewModel != null){
-            mAdapter = PostAdapter(ArrayList(0))
+            mAdapter = PostAdapter(ArrayList(0), viewModel)
             mFragmentBinding.rvList.adapter = mAdapter
         }else{
             Log.d("Main Fragment", "ViewModel not initialized when attempting to set up adapter.")

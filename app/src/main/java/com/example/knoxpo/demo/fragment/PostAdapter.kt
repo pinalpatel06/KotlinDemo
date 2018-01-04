@@ -13,7 +13,9 @@ import com.example.knoxpo.demo.databinding.ItemTaskBinding
  * Created by knoxpo on 3/1/18.
  */
 class PostAdapter(
-        private var posts: List<Post>
+        private var posts: List<Post>,
+        private val viewModel: PostViewModel
+
 ): RecyclerView.Adapter<AdapterVH>() {
     private lateinit var binding : ItemTaskBinding
 
@@ -21,7 +23,7 @@ class PostAdapter(
         val inflator = LayoutInflater.from(parent.context)
 
         binding = ItemTaskBinding.inflate(inflator, parent, false)
-        return AdapterVH(binding, binding.root)
+        return AdapterVH(binding, binding.root, viewModel)
     }
 
     override fun onBindViewHolder(holder: AdapterVH?, position: Int) {
@@ -30,6 +32,7 @@ class PostAdapter(
             post = posts[position]
             executePendingBindings()
         }*/
+
         holder?.bind(posts[position])
     }
 
@@ -48,13 +51,19 @@ class PostAdapter(
     }
 }
 
-class AdapterVH(binding: ItemTaskBinding?, itemView: View) : RecyclerView.ViewHolder(itemView) {
+class AdapterVH(binding: ItemTaskBinding?, itemView: View, val viewModel: PostViewModel) : RecyclerView.ViewHolder(itemView) {
     private val mBinding = binding
 
     fun  bind(post: Post){
         Log.d("bind: ", post.toString())
+        val userActionListener = object :PostItemUserActionListener{
+            override fun onPostClicked(post: Post) {
+                viewModel.openPostEvent.setValue(post)
+            }
+        }
 
         mBinding?.post = post
+        mBinding?.listener = userActionListener
         mBinding?.executePendingBindings()
     }
 }
