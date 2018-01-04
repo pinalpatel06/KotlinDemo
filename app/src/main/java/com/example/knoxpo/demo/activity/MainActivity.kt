@@ -31,15 +31,12 @@ class MainActivity : ToolbarActivity(), PostItemNavigator {
         super.onCreate(savedInstanceState)
 
         mViewModel = obtainViewModel().apply {
-           // openPostDetail()
             openPostEvent.observe(this@MainActivity, Observer<Post> { t: Post? ->
                 if(t != null){
                     openPostDetail(t)
                 }
             })
-
         }
-
     }
 
     fun obtainViewModel(): PostViewModel= obtainViewModel(PostViewModel::class.java)

@@ -30,6 +30,7 @@ class PostAdapter(
         Log.d("On Bind: ", position.toString())
         /*with(binding){
             post = posts[position]
+            listener = userActionListener
             executePendingBindings()
         }*/
 
