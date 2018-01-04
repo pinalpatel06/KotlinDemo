@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.content.Context
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
+import com.example.knoxpo.demo.SingleLiveEvent
 import com.example.knoxpo.demo.data.PostDataSource
 import com.example.knoxpo.demo.data.PostRepository
 import com.example.knoxpo.demo.data.model.Post
@@ -19,6 +20,7 @@ class PostViewModel(
 ) :AndroidViewModel(context){
 
     val items: ObservableList<Post> = ObservableArrayList()
+    internal val openPostEvent = SingleLiveEvent<Post>()
 
     fun start(){
         loadPost()
